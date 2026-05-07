@@ -313,7 +313,7 @@
             </div>
 
             <div class="info-card">
-                <strong>Fun Fact:</strong> You have lived for <span id="funFact"></span> since your birth! 🎉
+                <strong>💡 Advise from Manish:</strong> <span id="adviceText"></span>
             </div>
         </div>
     </div>
@@ -326,7 +326,41 @@
         const yearsValue = document.getElementById('yearsValue');
         const monthsValue = document.getElementById('monthsValue');
         const daysValue = document.getElementById('daysValue');
-        const funFact = document.getElementById('funFact');
+        const adviceText = document.getElementById('adviceText');
+
+        const advices = [
+            // Beauty Tips
+            "Stay hydrated for glowing skin! Drink at least 8 glasses of water daily. 💧",
+            "Get 7-8 hours of sleep for better skin and mental health. Beauty sleep is real! 😴",
+            "Use sunscreen every day, even on cloudy days. Prevention is the best anti-aging! ☀️",
+            "Exercise regularly for that natural glow. It increases blood flow to your skin! 🏃",
+            "Remove makeup before bed. Your skin needs to breathe at night! 🧴",
+
+            // Cooking Tips
+            "Taste your food as you cook. Adjust seasonings gradually for the perfect flavor! 👨‍🍳",
+            "Use fresh ingredients. They make a huge difference in any dish! 🥗",
+            "Preheat your oven properly for better baking results. Patience pays off! 🍰",
+            "Always read the recipe completely before starting to cook. Preparation is key! 📖",
+            "Let meat rest after cooking. It keeps the juices inside! 🥩",
+
+            // Finance Tips
+            "Start saving early. Compound interest is your best friend over time! 💰",
+            "Create a monthly budget and stick to it. Know where your money goes! 📊",
+            "Build an emergency fund with 3-6 months of expenses. Peace of mind matters! 🏦",
+            "Invest in yourself first. Education and health are the best investments! 📚",
+            "Live below your means. Spend less than you earn and watch wealth grow! 💸",
+
+            // Education Tips
+            "Read every day. It improves vocabulary and knowledge! 📖",
+            "Break your study sessions into 25-minute chunks with breaks. Stay focused! ⏰",
+            "Teach others what you learn. Teaching reinforces your own understanding! 🎓",
+            "Practice regularly. Consistency beats intensity in learning! 💪",
+            "Ask questions when you don't understand. Curiosity is the path to mastery! 🤔"
+        ];
+
+        function getRandomAdvice() {
+            return advices[Math.floor(Math.random() * advices.length)];
+        }
 
         // Set max date to today
         const today = new Date().toISOString().split('T')[0];
@@ -390,10 +424,8 @@
             monthsValue.textContent = months;
             daysValue.textContent = days;
 
-            // Fun fact
-            const hours = Math.floor(totalDays * 24);
-            const minutes = Math.floor(totalDays * 24 * 60);
-            funFact.textContent = `${hours.toLocaleString()} hours or ${minutes.toLocaleString()} minutes`;
+            // Random advice from Manish
+            adviceText.textContent = getRandomAdvice();
 
             resultsSection.classList.add('active');
         }
