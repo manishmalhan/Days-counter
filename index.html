@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Days Counter - Calculate Days Since Birth</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            font-weight: bold;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .date-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            transition: all 0.3s ease;
+        }
+
+        .date-input-wrapper:hover {
+            border-color: #667eea;
+            background: #f5f7ff;
+        }
+
+        .date-input-wrapper:focus-within {
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .calendar-icon {
+            margin-right: 12px;
+            font-size: 20px;
+            color: #667eea;
+        }
+
+        input[type="date"] {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            color: #333;
+            cursor: pointer;
+            outline: none;
+            font-weight: 500;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            filter: invert(0.5);
+        }
+
+        .results-section {
+            display: none;
+        }
+
+        .results-section.active {
+            display: block;
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 30px;
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .result-label {
+            font-size: 13px;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .result-number {
+            font-size: 56px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .result-unit {
+            font-size: 16px;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+
+        .breakdown-card {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .breakdown-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        .breakdown-items {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .breakdown-item {
+            text-align: center;
+        }
+
+        .breakdown-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 4px;
+        }
+
+        .breakdown-label {
+            font-size: 13px;
+            color: #999;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-card {
+            background: #e8f4f8;
+            border-left: 4px solid #667eea;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .info-card strong {
+            color: #667eea;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .error.active {
+            display: block;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            margin-top: 20px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 28px 20px;
+                border-radius: 20px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .result-number {
+                font-size: 42px;
+            }
+
+            .breakdown-value {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📅 Days Counter</h1>
+            <p>Calculate days since your birth</p>
+        </div>
+
+        <div class="input-section">
+            <label class="label">Your Date of Birth</label>
+            <div class="date-input-wrapper">
+                <span class="calendar-icon">📆</span>
+                <input
+                    type="date"
+                    id="dobInput"
+                    placeholder="Select your date of birth"
+                >
+            </div>
+            <div class="error" id="error"></div>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+            <div class="result-card">
+                <div class="result-label">Total Days Since Birth</div>
+                <div class="result-number" id="daysCount">0</div>
+                <div class="result-unit">days</div>
+            </div>
+
+            <div class="breakdown-card">
+                <div class="breakdown-title">Age Breakdown</div>
+                <div class="breakdown-items">
+                    <div class="breakdown-item">
+                        <div class="breakdown-value" id="yearsValue">0</div>
+                        <div class="breakdown-label">Years</div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-value" id="monthsValue">0</div>
+                        <div class="breakdown-label">Months</div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-value" id="daysValue">0</div>
+                        <div class="breakdown-label">Days</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <strong>Fun Fact:</strong> You have lived for <span id="funFact"></span> since your birth! 🎉
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const dobInput = document.getElementById('dobInput');
+        const resultsSection = document.getElementById('resultsSection');
+        const errorElement = document.getElementById('error');
+        const daysCount = document.getElementById('daysCount');
+        const yearsValue = document.getElementById('yearsValue');
+        const monthsValue = document.getElementById('monthsValue');
+        const daysValue = document.getElementById('daysValue');
+        const funFact = document.getElementById('funFact');
+
+        // Set max date to today
+        const today = new Date().toISOString().split('T')[0];
+        dobInput.setAttribute('max', today);
+
+        // Set default value to 20 years ago
+        const defaultDate = new Date();
+        defaultDate.setFullYear(defaultDate.getFullYear() - 20);
+        dobInput.value = defaultDate.toISOString().split('T')[0];
+
+        dobInput.addEventListener('change', calculateDays);
+
+        // Calculate on page load
+        window.addEventListener('load', calculateDays);
+
+        function calculateDays() {
+            const dob = dobInput.value;
+
+            if (!dob) {
+                resultsSection.classList.remove('active');
+                errorElement.textContent = 'Please select your date of birth';
+                errorElement.classList.add('active');
+                return;
+            }
+
+            const dobDate = new Date(dob + 'T00:00:00');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (dobDate > today) {
+                resultsSection.classList.remove('active');
+                errorElement.textContent = 'Date of birth cannot be in the future';
+                errorElement.classList.add('active');
+                return;
+            }
+
+            errorElement.classList.remove('active');
+
+            // Calculate total days
+            const totalDays = Math.floor((today - dobDate) / (1000 * 60 * 60 * 24));
+
+            // Calculate years, months, days
+            let years = today.getFullYear() - dobDate.getFullYear();
+            let months = today.getMonth() - dobDate.getMonth();
+            let days = today.getDate() - dobDate.getDate();
+
+            if (days < 0) {
+                months--;
+                const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+                days += prevMonth.getDate();
+            }
+
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            // Update UI
+            daysCount.textContent = totalDays.toLocaleString();
+            yearsValue.textContent = years;
+            monthsValue.textContent = months;
+            daysValue.textContent = days;
+
+            // Fun fact
+            const hours = Math.floor(totalDays * 24);
+            const minutes = Math.floor(totalDays * 24 * 60);
+            funFact.textContent = `${hours.toLocaleString()} hours or ${minutes.toLocaleString()} minutes`;
+
+            resultsSection.classList.add('active');
+        }
+    </script>
+</body>
+</html>
